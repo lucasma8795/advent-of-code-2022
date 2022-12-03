@@ -12,4 +12,4 @@ for line in lines:
 		cur += int(line)
 
 data.sort()
-print(sum(data[:-3]))
+print(sum(data[-3:]))
