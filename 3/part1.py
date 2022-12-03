@@ -7,20 +7,15 @@ with open("./data.txt", "r") as fo:
 
 ans = 0
 for string in data:
-	char_count = [0 for _ in range(127)]
 	mid_pos = len(string)//2
 	left, right = set(string[:mid_pos]), set(string[mid_pos:])
+	char = (left & right).pop()
 
-	for char in chain(left, right):
-		char_count[ord(char)] += 1
-
-	tmpans = char_count.index(2)
-	if 65 <= tmpans <= 90:
-		tmpans -= 65
-		tmpans += 27
+	priority = ord(char)
+	if 65 <= priority <= 90:
+		priority += (-65 + 27)
 	else:
-		tmpans -= 97
-		tmpans += 1
-	ans += tmpans
+		priority += (-97 + 1)
+	ans += priority
 
 print(ans)

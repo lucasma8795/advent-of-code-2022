@@ -6,20 +6,15 @@ with open("./data.txt", "r") as fo:
 		data.append(line.strip())
 	
 ans = 0
-for i in range(100):
-	char_count = [0 for _ in range(127)]
-	s1, s2, s3 = set(data[i*3]), set(data[i*3+1]), set(data[i*3+2])
+for i in range(len(data)//3):
+	str1, str2, str3 = set(data[i*3]), set(data[i*3+1]), set(data[i*3+2])
+	char = (str1 & str2 & str3).pop()
 
-	for char in chain(s1, s2, s3):
-		char_count[ord(char)] += 1
-
-	tmpans = char_count.index(3)
-	if 65 <= tmpans <= 90:
-		tmpans -= 65
-		tmpans += 27
+	priority = ord(char)
+	if 65 <= priority <= 90:
+		priority += (-65 + 27)
 	else:
-		tmpans -= 97
-		tmpans += 1
-	ans += tmpans
+		priority += (-97 + 1)
+	ans += priority
 
 print(ans)

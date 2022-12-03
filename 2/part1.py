@@ -7,12 +7,12 @@ with open("./data.txt", "r") as fo:
 		rounds.append([map1.index(tmp1), map2.index(tmp2)])
 
 ans = 0
-for c1, c2 in rounds:
-	m = (c2 - c1 + 3)%3
-	if m == 1:
+for opp, me in rounds:
+	score = (me - opp + 3)%3
+	if score == 1:
 		ans += 6
-	elif m == 0:
+	elif score == 0:
 		ans += 3
-	ans += c2 + 1
+	ans += me + 1
 
 print(ans)
