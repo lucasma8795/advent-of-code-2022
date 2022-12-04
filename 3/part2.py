@@ -1,5 +1,3 @@
-from itertools import chain
-
 data = []
 with open("./data.txt", "r") as fo:
 	for line in fo.readlines():
