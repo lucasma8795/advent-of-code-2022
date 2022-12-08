@@ -1,7 +1,7 @@
 from collections import deque
 
 data = deque()
-size_records = []
+sizes = []
 
 class File:
 	def __init__(self, name, size):
@@ -18,7 +18,7 @@ class Directory:
 		child.parent = self
 		self.children.append(child)
 	
-	def get_child(self, name):
+	def get_directory(self, name):
 		for child in self.children:
 			if isinstance(child, Directory) and child.name == name:
 				return child
@@ -32,7 +32,7 @@ class Directory:
 			else:
 				size += child.get_size()
 
-		size_records.append((self.name, size))
+		sizes.append(size)
 		return size
 
 with open("./data.txt", "r") as fo:
@@ -44,37 +44,36 @@ root = Directory("/")
 cur_directory = root
 while data:
 	line = data.popleft()
+	assert line[0] == "$" # is a command
+
 	# list directory
 	if line[1] == "ls":
 		while True:
-			if not data: break
-			next_line = data[0]
-			if next_line[0] == "$":
-				break
-			else:
-				itemtype, name 	= data.popleft()
-				if itemtype == "dir": # item is directory
-					cur_directory.add_child(Directory(name))
-				else: # item is a file; itemtype is its size
-					cur_directory.add_child(File(name, int(itemtype)))
-	# goto directory
+			if not data: break # deque is empty
+			next_line = data[0] # peek at leftmost element of deque
+			if next_line[0] == "$": break # next line is a command
+
+			itemtype, name 	= data.popleft() # e.g. dir bjlcfcfq; 83465 bnm
+			if itemtype == "dir": # item is directory
+				cur_directory.add_child(Directory(name))
+			else: # item is a file; itemtype is its size
+				cur_directory.add_child(File(name, int(itemtype)))
+
+	# traverse directory
 	elif line[1] == "cd":
-		goto = line[2]
-		if goto == "..":
+		name = line[2]
+		if name == "..": # go up a level
 			cur_directory = cur_directory.parent
 		else:
-			cur_directory = cur_directory.get_child(goto)
+			cur_directory = cur_directory.get_directory(name)
 
 root_size = root.get_size()
 total_disk_size = 70000000
 reqd_disk_size = 30000000
 min_free_size = reqd_disk_size - total_disk_size + root_size
-
-size_records.sort(key=lambda x: x[1])
-for name, size in size_records:
+ans = 10**9
+for size in sizes:
 	if size < min_free_size:
 		continue
-	else:
-		ans = size
-		break
+	ans = min(ans, size)
 print(ans)

@@ -6,16 +6,15 @@ def count_visible(data):
 
 	def _search(init_pos, dir):
 		init_x, init_y = init_pos[0], init_pos[1]
-		flag, last = True, data[init_y][init_x]
+		last = data[init_y][init_x]
 		visible.append(init_x*1000+init_y)
 		x, y = init_pos
-		while flag:
+		while True:
 			x += dir[0]
 			y += dir[1]
 			if x == -1 or x == X_MAX or y == -1 or y == Y_MAX: break
 			cur = data[y][x]
-			if cur > last:
-				visible.append(x*1000+y)
+			if cur > last: visible.append(x*1000+y)
 			last = max(last, cur)
 
 	for y in range(Y_MAX): # looking from left

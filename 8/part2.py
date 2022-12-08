@@ -39,11 +39,11 @@ def get_max_score(data):
 	for x in range(X_MAX-1, -1, -1): # looking from down
 		_search((x, Y_MAX-1), DIR_UP, down)
 
-	out = 0
+	max_score = 0
 	for x, y in product(range(X_MAX), range(Y_MAX)):
 		cur_score = up[y][x] * down[y][x] * left[y][x] * right[y][x]
-		out = max(out, cur_score)
-	return out
+		max_score = max(max_score, cur_score)
+	return max_score
 
 data = []
 with open("./data.txt", "r") as fo:
