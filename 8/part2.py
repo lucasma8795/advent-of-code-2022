@@ -3,54 +3,47 @@ from copy import deepcopy
 
 def get_max_score(data):
 	X_MAX, Y_MAX = len(data[0]), len(data)
-	zero_grid = [[0 for _ in range(X_MAX)] for _ in range(Y_MAX)]
-	left, right, down, up = [deepcopy(zero_grid) for _ in range(4)]
+	DIR_DOWN, DIR_UP = (0, 1), (0, -1)
+	DIR_LEFT, DIR_RIGHT = (-1, 0), (1, 0)
 
-	for y in range(Y_MAX):
-		num_dist = [-1 for _ in range(10)]
-		for x in range(X_MAX):
-			cur_num, cur_dist, blocking = data[y][x], x, 0
-			for j in range(cur_num, 10):
-				if num_dist[j] == -1: continue
-				blocking = max(blocking, num_dist[j])
-			num_dist[cur_num] = cur_dist
-			left[y][x] = cur_dist - blocking
+	empty = [[0 for _ in range(X_MAX)] for _ in range(Y_MAX)]
+	left, right, down, up = [deepcopy(empty) for _ in range(4)]
 
-	for y in range(Y_MAX):
-		num_dist = [-1 for _ in range(10)]
-		for x in range(X_MAX-1, -1, -1):
-			cur_num, cur_dist, blocking = data[y][x], X_MAX-x-1, 0
-			for j in range(cur_num, 10):
-				if num_dist[j] == -1: continue
-				blocking = max(blocking, num_dist[j])
-			num_dist[cur_num] = cur_dist
-			right[y][x] = cur_dist - blocking
+	def _search(init_pos, dir, map):
+		nums_dist = [None for _ in range(10)]
+		x, y = init_pos
+		cur_dist = 0
+		while True:
+			num, blocking_dist = data[y][x], 0
+			for i in range(num, 10):
+				if nums_dist[i] is None: continue
+				blocking_dist = max(blocking_dist, nums_dist[i])
 
-	for x in range(X_MAX):
-		num_dist = [-1 for _ in range(10)]
-		for y in range(Y_MAX):
-			cur_num, cur_dist, blocking = data[y][x], y, 0
-			for j in range(cur_num, 10):
-				if num_dist[j] == -1: continue
-				blocking = max(blocking, num_dist[j])
-			num_dist[cur_num] = cur_dist
-			down[y][x] = cur_dist - blocking
+			nums_dist[num] = cur_dist
+			map[y][x] = cur_dist - blocking_dist
 
-	for x in range(X_MAX):
-		num_dist = [-1 for _ in range(10)]
-		for y in range(Y_MAX-1, -1, -1):
-			cur_num, cur_dist, blocking = data[y][x], Y_MAX-y-1, 0
-			for j in range(cur_num, 10):
-				if num_dist[j] == -1: continue
-				blocking = max(blocking, num_dist[j])
-			num_dist[cur_num] = cur_dist
-			up[y][x] = cur_dist - blocking
+			x += dir[0]
+			y += dir[1]
+			if x == -1 or x == X_MAX or y == -1 or y == Y_MAX: break
+			cur_dist += 1
 	
+	for y in range(Y_MAX): # looking from left
+		_search((0, y), DIR_RIGHT, left)
+	
+	for y in range(Y_MAX-1, -1, -1): # looking from right
+		_search((X_MAX-1, y), DIR_LEFT, right)
+	
+	for x in range(X_MAX): # looking from up
+		_search((x, 0), DIR_DOWN, up)
+	
+	for x in range(X_MAX-1, -1, -1): # looking from down
+		_search((x, Y_MAX-1), DIR_UP, down)
+
 	out = 0
 	for x, y in product(range(X_MAX), range(Y_MAX)):
-		out = max(out, up[y][x] * down[y][x] * left[y][x] * right[y][x])
+		cur_score = up[y][x] * down[y][x] * left[y][x] * right[y][x]
+		out = max(out, cur_score)
 	return out
-
 
 data = []
 with open("./data.txt", "r") as fo:

@@ -1,5 +1,9 @@
 def count_visible(data):
+	visible = []
 	X_MAX, Y_MAX = len(data[0]), len(data)
+	DIR_DOWN, DIR_UP = (0, 1), (0, -1)
+	DIR_LEFT, DIR_RIGHT = (-1, 0), (1, 0)
+
 	def _search(init_pos, dir):
 		init_x, init_y = init_pos[0], init_pos[1]
 		flag, last = True, data[init_y][init_x]
@@ -14,20 +18,19 @@ def count_visible(data):
 				visible.append(x*1000+y)
 			last = max(last, cur)
 
-	visible = []
-	DIR_DOWN, DIR_UP = (0, 1), (0, -1)
-	DIR_LEFT, DIR_RIGHT = (-1, 0), (1, 0)
-	for x in range(X_MAX):
-		_search((x, 0), DIR_DOWN)
-	for x in range(X_MAX):
-		_search((x, Y_MAX-1), DIR_UP)
-	for y in range(Y_MAX):
+	for y in range(Y_MAX): # looking from left
 		_search((0, y), DIR_RIGHT)
-	for y in range(Y_MAX):
+
+	for y in range(Y_MAX): # looking from right
 		_search((X_MAX-1, y), DIR_LEFT)
+	
+	for x in range(X_MAX): # looking from up
+		_search((x, 0), DIR_DOWN)
 
-	return len(set(visible))
+	for x in range(X_MAX): # looking from down
+		_search((x, Y_MAX-1), DIR_UP)
 
+	return len(set(visible)) # unique visible trees
 
 data = []
 with open("./data.txt", "r") as fo:
