@@ -4,8 +4,7 @@ def sgn(num):
 	else: return -1
 
 def touching(x1, y1, x2, y2):
-	x_diff, y_diff = abs(x2 - x1), abs(y2 - y1)
-	return x_diff == y_diff == 1 or x_diff + y_diff < 2
+	return max(abs(x2 - x1), abs(y2 - y1)) < 2
 
 class Node:
 	def __init__(self, x=0, y=0):

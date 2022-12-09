@@ -1,6 +1,5 @@
 def touching(x1, y1, x2, y2):
-	x_diff, y_diff = abs(x2 - x1), abs(y2 - y1)
-	return x_diff == y_diff == 1 or x_diff + y_diff < 2
+	return max(abs(x2 - x1), abs(y2 - y1)) < 2
 
 dir_map = {
 	'L': (-1, 0), 'R': (1, 0),
