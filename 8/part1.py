@@ -5,10 +5,9 @@ def count_visible(data):
 	DIR_LEFT, DIR_RIGHT = (-1, 0), (1, 0)
 
 	def _search(init_pos, dir):
-		init_x, init_y = init_pos[0], init_pos[1]
-		last = data[init_y][init_x]
-		visible.append(init_x*1000+init_y)
 		x, y = init_pos
+		last = data[y][x]
+		visible.append(x*1000+y)
 		while True:
 			x += dir[0]
 			y += dir[1]
