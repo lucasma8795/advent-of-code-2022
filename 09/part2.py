@@ -15,11 +15,10 @@ class Node:
 		if self.parent:
 			h_x, h_y = self.parent.x, self.parent.y # pos of "head"
 			if not touching(h_x, h_y, self.x, self.y):
-				if self.x != h_x: self.x += sgn(h_x - self.x)
-				if self.y != h_y: self.y += sgn(h_y - self.y)
+				self.x += sgn(h_x - self.x)
+				self.y += sgn(h_y - self.y)
 
-		if self.child:
-			self.child.update()
+		if self.child: self.child.update()
 
 dir_map = {
 	'L': (-1, 0), 'R': (1, 0),
