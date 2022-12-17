@@ -21,7 +21,6 @@ class Monkey:
 	
 
 monkeys = []
-count = 0
 with open("./data.txt", "r") as fo:
 	for line in fo.readlines():
 		lines.append(line.strip())
@@ -32,21 +31,19 @@ with open("./data.txt", "r") as fo:
 			throw_true, throw_false = map(int, lines[3].split(" "))
 			monkeys.append(Monkey(items, div_cond, throw_true, throw_false, operation))
 			lines = []
-			count += 1
 
 for round in range(20):
 	for c, monkey in enumerate(monkeys):
 		while len(monkey.items) != 0:
 			item = monkey.items.pop()
 			monkey.items_inspected += 1
-			item = monkey.transform_func(item) // 3
+			item = monkey.transform_func(item)
 			if item % monkey.div_cond == 0:
 				monkeys[monkey.throw_true].items.append(item)
 			else:
 				monkeys[monkey.throw_false].items.append(item)
 
-values = []
-for monkey in monkeys:
-	values.append(monkey.items_inspected)
-values.sort(reverse=True)
-print(values[0] * values[1])
+items_inspected = [monkey.items_inspected for monkey in monkeys]
+items_inspected.sort(reverse=True)
+ans = items_inspected[0] * items_inspected[1]
+print(ans)

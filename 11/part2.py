@@ -21,23 +21,21 @@ class Monkey:
 			self.transform_func = lambda x: x ** operand
 
 
-combined_items = []
+all_items = []
 monkeys = []
-count = 0
 with open("./data.txt", "r") as fo:
 	for line in fo.readlines():
 		lines.append(line.strip())
 		if len(lines) == BLOCK_LEN:
 			items = list(map(int, lines[0].split(" ")))
-			combined_items += items
+			all_items += items
 			operation = lines[1].split(" ")
 			div_cond = int(lines[2])
 			throw_true, throw_false = map(int, lines[3].split(" "))
 			monkeys.append(Monkey(items, div_cond, throw_true, throw_false, operation))
 			lines = []
-			count += 1
 
-MOD = lcm(*combined_items)
+MOD = lcm(*all_items)
 
 for round in range(10000):
 	for c, monkey in enumerate(monkeys):
@@ -50,8 +48,7 @@ for round in range(10000):
 			else:
 				monkeys[monkey.throw_false].items.append(item)
 
-values = []
-for monkey in monkeys:
-	values.append(monkey.items_inspected)
-values.sort(reverse=True)
-print(values[0] * values[1])
+items_inspected = [monkey.items_inspected for monkey in monkeys]
+items_inspected.sort(reverse=True)
+ans = items_inspected[0] * items_inspected[1]
+print(ans)
