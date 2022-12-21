@@ -1,51 +1,45 @@
-# MIN_X, MIN_Y = 0, 0
-# MAX_X, MAX_Y = 4000000, 4000000
+from math import sqrt
 
-# def segment_union(segments):
-# 	# klee's algorithm
-# 	segments.sort(key=lambda x: x[0])
-# 	counter, ans = 0, 0
-# 	cur, prev = segments[0], None
+SQRT_2 = sqrt(2)
+EPS = 1e-7
 
-# 	for i in range(len(segments)):
-# 		cur = segments[i]
-# 		if i > 0:
-# 			if cur[0] > prev[0] and counter > 0:
-# 				ans += cur[0] - prev[0]
+def rotate_45deg(x, y): return (x-y)/SQRT_2, (x+y)/SQRT_2
+def undo_rotate_45deg(x, y): return (x+y)/SQRT_2, (-x+y)/SQRT_2
 
-# 		if cur[1]: counter -= 1
-# 		else: counter += 1
-# 		prev = cur
+x_pts, y_pts = [], []
+with open("./data.txt", "r") as fo:
+	for line in fo.readlines():
+		s_x, s_y, b_x, b_y = map(int, line.strip().split(' '))
+		r = abs(s_x - b_x) + abs(s_y - b_y) # manhattan distance
 
-# 	return ans
+		# rotate points by 45 deg anticlockwise -> region becomes square
+		s_x, s_y = rotate_45deg(s_x, s_y)
+		b_x, b_y = rotate_45deg(b_x, b_y)
+		
+		d = r / SQRT_2 # half of side length = r * cos45
 
+		x_pts.append(s_x - d)
+		x_pts.append(s_x + d)
+		y_pts.append(s_y - d)
+		y_pts.append(s_y + d)
 
-# data = []
-# with open("./data.txt", "r") as fo:
-# 	for line in fo.readlines():
-# 		data.append(list(map(int, line.strip().split(' '))))
+x_pts, y_pts = list(set(x_pts)), list(set(y_pts))
+x_pts.sort()
+y_pts.sort()
 
-# Y = 3042458
-# segments = []
+for i in range(len(x_pts)-1):
+	if abs(abs(x_pts[i+1] - x_pts[i]) - SQRT_2) < EPS:
+		x_min, x_max = x_pts[i], x_pts[i+1]
+		break
 
-# for s_x, s_y, b_x, b_y in data:
-# 	d_x, d_y = abs(s_x - b_x), abs(s_y - b_y)
-# 	d = d_x + d_y
+for i in range(len(y_pts)-1):
+	if abs(abs(y_pts[i+1] - y_pts[i]) - SQRT_2) < EPS:
+		y_min, y_max = y_pts[i], y_pts[i+1]
+		break
 
-# 	if abs(s_y - Y) > d: continue
-	
-# 	start = s_x - d + abs(s_y - Y)
-# 	end = s_x + d - abs(s_y - Y)
+x_mid, y_mid = (x_min+x_max)/2, (y_min+y_max)/2
+x_mid, y_mid = undo_rotate_45deg(x_mid, y_mid)
+x_mid, y_mid = round(x_mid), round(y_mid)
 
-# 	start = max(start, MIN_X)
-# 	end = min(end, MAX_X)
-
-# 	segments.append((start, False))
-# 	segments.append((end, True))
-
-# segments.sort(key=lambda x: x[0])
-# print(segments)
-# total_len = segment_union(segments)
-# print(total_len)
-
-# print(3012821*4000000+3042458)
+ans = x_mid * 4000000 + y_mid
+print(ans)
