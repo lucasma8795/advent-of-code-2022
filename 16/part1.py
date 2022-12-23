@@ -1,4 +1,5 @@
 from sys import maxsize as INF
+from collections import deque
 
 # "good" valves are non-zero valves & the AA valve
 all_valves, good_valves = {}, []
@@ -45,21 +46,27 @@ def build_graph(data, all_valves, good_valves):
 			G[i][j] = _G[u][v] + 1 if u != v else 0 # +1 for time in opening valve
 	return G
 
-def solve(G, u, visited, time=30, total_pressure=0, flow_rate=0):
+def solve(G, start):
 	ans = 0
-	more = False
-	for v in range(len(good_valves)):
-		if visited & 2**v != 0: continue # already visited
-		if time - G[u][v] < 0: continue # not enough time
-		more = True
-		ans = max(ans, solve(G, v, visited+2**v, 
-			time=time-G[u][v],
-			total_pressure=total_pressure+flow_rate*G[u][v],
-			flow_rate=flow_rate+flow_rates[v]
-		))
-	if more: return ans
-	else: return total_pressure + time * flow_rate
+	q = deque()
+	q.append((start, 2**start, 30, 0, 0)) # cur node, visited, time left, total pressure, flow rate
+
+	while q:
+		u, visited, time, total_pressure, flow_rate = q.pop()
+		ans = max(ans, total_pressure + time * flow_rate)
+
+		for v in range(len(good_valves)):
+			if visited & 2**v != 0: continue # already visited
+			if time - G[u][v] < 0: continue # not enough time
+
+			new_visited = visited + 2**v # set v bit to 1
+			new_time = time - G[u][v] # time - deltatime
+			new_flow_rate = flow_rate + flow_rates[v] # add v flowrate
+			new_total_pressure = total_pressure + flow_rate * G[u][v]
+			q.append((v, new_visited, new_time, new_total_pressure, new_flow_rate))
+		
+	return ans
 
 G = build_graph(data, all_valves, good_valves)
-ans = solve(G, start, 2**start)
+ans = solve(G, start)
 print(ans)
